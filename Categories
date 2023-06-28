@@ -1,0 +1,88 @@
+// For “Category” Section
+
+
+Cypress.on("uncaught:exception", (err) => {
+  // Skip the error and continue test execution
+  return false;
+});
+
+describe('Admin Dashboard - Categories', function() {
+  beforeEach(() => {
+    // Load the fixture data before each test
+    cy.fixture('data.json').as('data');
+
+    // Log in before each test
+    cy.get('@data').then((data) => {
+      cy.visit(data.url);
+
+      cy.get('[placeholder="Enter your email"]').type(data.validUser.email); 
+      cy.get('[placeholder="*******"]').type(data.validUser.password); 
+      cy.get('button[type="submit"]').click();
+
+      cy.contains('Incorrect username or password').should('not.exist')
+
+      cy.wait(3000);
+    });
+  });
+
+  it('should add a new category', function() {
+    // Use the fixture data in our test
+    cy.get('@data').then((data) => {
+      // Navigate to Categories page
+      cy.get('a[href="/categories"]', { timeout: 10000 }).should("be.visible").click();
+
+      // Click on 'Add Category' button
+      cy.get('button').contains('Add Category').click();
+
+      // Enter category description
+      cy.get('textarea[name="input-7-4"]').type("Random Description");
+
+      // Enter category name
+      cy.get('div.v-input__slot input[type="text"]').type(data.category.name);
+            
+      // Submit the form
+      cy.get('button[type="submit"]').click();
+      cy.wait(2000);
+
+      cy.get("div.subtitle-2")
+        .contains(data.category.name, {
+          matchCase: true,
+        })
+        .should("be.visible");
+    });
+  });
+
+  it("should perform delete category successfully", function () {
+    cy.get('@data').then((data) => {
+      cy.get('a[href="/categories"]').should("be.visible").click();
+      cy.get('button[type="button"]').contains("Delete").eq(0).click();
+      cy.get('button[type="button"]').contains("Yes").click();
+      cy.wait(500);
+      cy.reload({ preserveOnce: true });
+      cy.wait(1000);
+      cy.get("div.subtitle-2").should("not.contain", data.category.name);
+    });
+  });
+  
+});
+
+
+————-------------
+
+-> data.json
+
+{
+  "url": "https://admin.owned.airdropped.tech/auth/signin",
+  
+  "validUser": {
+    "email": "garod@airdropped.tech",
+    "password": "qwerty123"
+  },
+  "category": {
+    "name": "Category Name",
+    "description": "Category Description"
+  }
+}
+
+
+
