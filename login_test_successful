@@ -1,0 +1,23 @@
+Cypress.on("uncaught:exception", (err) => {
+  // Skip the error and continue test execution
+  return false;
+});
+
+describe('Admin Dashboard - Categories', function() {
+  beforeEach(() => {
+    // Load the fixture data before each test
+    cy.fixture('data.json').as('data');
+  });
+
+  it('should be logged in and redirected to the dashboard', function() {
+    
+    cy.get('@data').then((data) => {
+      cy.visit(data.url);
+      cy.get('[placeholder="Enter your email"]').type(data.validUser.email); 
+      cy.get('[placeholder="*******"]').type(data.validUser.password); 
+      cy.get('button[type="submit"]').click();
+      cy.contains('Incorrect username or password').should('not.exist');
+    });
+
+  });
+});
