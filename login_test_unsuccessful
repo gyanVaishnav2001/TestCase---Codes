@@ -1,0 +1,25 @@
+Cypress.on("uncaught:exception", (err) => {
+  // Skip the error and continue test execution
+  return false;
+});
+
+describe('Admin Dashboard - Categories', function() {
+  beforeEach(() => {
+    // Load the fixture data before each test
+    cy.fixture('data.json').as('data');
+  });
+
+  it('Verify that a user cannot login with invalid credentials and gets an error message', function() {
+    
+    cy.get('@data').then((data) => {
+      cy.visit(data.url);
+     
+      cy.get('[placeholder="Enter your email"]').type('invalid@airdropped.tech'); 
+      cy.get('[placeholder="*******"]').type('invalidPassword'); 
+      cy.get('button[type="submit"]').click();
+      
+      cy.contains('Incorrect username or password').should('be.visible');
+    });
+
+  });
+});
