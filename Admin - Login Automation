@@ -56,3 +56,20 @@ describe('Admin Dashboard - Login Automation', function() {
 
 --------
 
+data.json
+
+{
+  "url": "https://admin.owned.airdropped.tech/auth/signin  ",
+  
+  "validUser": {
+    "email": "clara+0@airdropped.tech",
+    "password": "Test@123"
+  },
+  
+  "invalidUser": {
+      "emailaddress": "invalid@example.com",
+      "password": "invalidpassword"
+    }
+}
+
+
