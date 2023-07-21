@@ -1,0 +1,58 @@
+Cypress.on("uncaught:exception", (err) => {
+  // Skip the error and continue test execution
+  return false;
+});
+
+describe('Admin Dashboard - Login Automation', function() {
+  beforeEach(() => {
+    // Load the fixture data before each test
+    cy.fixture('data.json').as('data');
+  });
+
+  it('should be logged in and redirected to the dashboard for successful login', function() {
+    cy.get('@data').then((data) => {
+      cy.visit(data.url);
+      cy.get('[placeholder="Enter your email"]').type(data.validUser.email); 
+      cy.get('[placeholder="*******"]').type(data.validUser.password); 
+      
+      cy.wait(3000);
+
+      cy.get('button[type="submit"]').click();
+      cy.contains('Incorrect username or password').should('not.exist');
+
+      cy.wait(3000);
+
+    });
+  });
+
+  it('should display an error message for incorrect password', function() {
+    cy.get('@data').then((data) => {
+      cy.visit(data.url);
+      cy.get('[placeholder="Enter your email"]').type(data.validUser.email); 
+      cy.get('[placeholder="*******"]').type('incorrectPassword'); // Using an incorrect password here
+      cy.get('button[type="submit"]').click();
+
+      cy.wait(3000);
+
+      cy.contains('Incorrect username or password').should('be.visible');
+
+    });
+  });
+
+  it('should display appropriate error message for incomplete credentials', function() {
+    cy.get('@data').then((data) => {
+      cy.visit(data.url);
+      cy.get('[placeholder="Enter your email"]').click(); // Click on the email field to activate it
+      cy.get('[placeholder="*******"]').type('randomPassword'); // Type a random password
+
+      cy.wait(3000);
+      
+      cy.contains('This field is required').should('be.visible'); // Verify the error message for incomplete credentials
+    });
+  });
+
+});
+
+
+--------
+
