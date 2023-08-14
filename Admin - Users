@@ -1,0 +1,38 @@
+Cypress.on("uncaught:exception", (err) => {
+  // Skip the error and continue test execution
+  return false;
+});
+
+describe('Admin Dashboard - Users', function() {
+  beforeEach(() => {
+    // Load the fixture data before each test
+    cy.fixture('data.json').as('data');
+  });
+
+  it('should be able to navigate to the Users page and search', function() {
+    cy.get('@data').then((data) => {
+      cy.visit(data.url);
+      cy.get('[placeholder="Enter your email"]').type(data.validUser.email); 
+      cy.get('[placeholder="*******"]').type(data.validUser.password);
+      cy.get('button[type="submit"]').click();
+      
+      cy.wait(3000);
+      
+      // Now navigate to the Users page
+      cy.get('a[href="/users"]').click();
+
+      // Verify that you are on the Users page by checking the URL
+       cy.url().should('include', '/users');
+
+       cy.wait(3000);
+
+
+       cy.get('[placeholder="Search"]').type('Adi'); 
+
+       cy.wait(3000);
+
+    });
+  });
+
+
+});
